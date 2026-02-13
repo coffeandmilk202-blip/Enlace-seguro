@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para alguien especial ❤️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi favorita ❤️</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -14,25 +14,28 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
+            padding: 25px;
             border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 85%;
+            max-width: 400px;
             position: relative;
-            z-index: 1;
+            z-index: 5;
         }
 
         img {
-            width: 160px;
-            margin-bottom: 20px;
-            animation: float 6s ease-in-out infinite; 
+            width: 140px;
+            margin-bottom: 15px;
+            animation: float 5s ease-in-out infinite;
+            pointer-events: none;
         }
 
         @keyframes float {
@@ -40,39 +43,40 @@
             50% { transform: translateY(-10px); }
         }
 
-        h1 { color: #e91e63; font-size: 1.5rem; margin-bottom: 20px; }
+        h1 { color: #e91e63; font-size: 1.4rem; margin-bottom: 20px; }
 
         .buttons {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            min-height: 150px;
-            position: relative;
+            gap: 10px;
+            min-height: 100px;
         }
 
         button {
-            padding: 15px 25px;
-            font-size: 18px;
+            padding: 12px 20px;
+            font-size: 16px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.4s ease;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), font-size 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #btn-si {
             background-color: #4caf50;
             color: white;
-            z-index: 2;
+            z-index: 10;
         }
 
         #btn-no {
             background-color: #f44336;
             color: white;
-            z-index: 3; /* Siempre por encima para que puedas darle clic */
+            z-index: 11;
         }
 
+        /* Final épico en móvil */
         .pantalla-completa {
             position: fixed !important;
             top: 0 !important;
@@ -80,11 +84,12 @@
             width: 100vw !important;
             height: 100vh !important;
             z-index: 9999 !important;
-            font-size: 4rem !important;
+            font-size: 3rem !important;
             border-radius: 0 !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
+            background-color: #4caf50 !important;
         }
 
         .hidden { display: none !important; }
@@ -94,8 +99,8 @@
 
     <div class="container" id="main-card">
         <div id="quiz-section">
-            <img id="minion-img" src="minion.gif" alt="Minion">
-            <h1 id="question">¿Quieres ser mi San Valentín? ❤️</h1>
+            <img src="minion.gif" alt="Minion">
+            <h1>¿Quieres ser mi San Valentín? ❤️</h1>
             <div class="buttons">
                 <button id="btn-si">¡SÍ!</button>
                 <button id="btn-no">No</button>
@@ -105,7 +110,7 @@
         <div id="celebration" class="hidden">
             <img src="minion.gif" alt="minion">
             <h1 id="final-title"></h1>
-            <p id="final-message"></p>
+            <p id="final-message" style="font-size: 1.1rem; color: #555;"></p>
         </div>
     </div>
 
@@ -122,51 +127,51 @@
         let noClickCount = 0;
 
         const phrases = [
-            "¿Estás seguro? 🥺",
-            "¿De verdad? 😭",
-            "Piénsalo otra vez... 🧐",
-            "¡Me romperás el corazón! 💔",
-            "¿Segurísima? 🌸",
-            "¡Mira qué tierna soy! ✨",
-            "¡Voy a llorar! 😭",
-            "¡Anda, di que sí! 🙏",
-            "No seas así... 😤",
-            "¡Casi me atrapas! 😜",
-            "¡Nop! Por aquí no es 🚀",
-            "¡Ya me estoy cansando! 🏃‍♂️",
-            "¡No tienes escapatoria! 😎",
-            "¡ÚLTIMA OPORTUNIDAD! 🛑",
-            "¡QUE SÍ DIJE! 😤"
+            "¿Estás segura? 🥺", "¿De verdad? 😭", "Piénsalo... 🧐",
+            "¡Me romperás el corazón! 💔", "¿Segurísima? 🌸", "¡Mira qué tierno soy! ✨",
+            "¡Voy a llorar! 😭", "¡Anda, di que sí! 🙏", "No seas así... 😤",
+            "¡Casi me atrapas! 😜", "¡Nop! Por aquí no 🚀", "¡Ya me canso! 🏃‍♂️",
+            "¡ÚLTIMA OPORTUNIDAD! 🛑", "¡QUE SÍ DIJE! 😤"
         ];
 
         function moverBoton() {
-            // Aseguramos que se mueva dentro del área visible sin salirse
-            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - 100) + 50;
-            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - 100) + 50;
+            // Cálculo mejorado para no salirse de la vista del móvil
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            
+            const x = Math.random() * (vw - btnNo.offsetWidth - 40) + 20;
+            const y = Math.random() * (vh - btnNo.offsetHeight - 40) + 20;
             
             btnNo.style.position = 'fixed';
-            btnNo.style.left = x + 'px';
-            btnNo.style.top = y + 'px';
+            btnNo.style.left = '0';
+            btnNo.style.top = '0';
+            btnNo.style.transform = `translate(${x}px, ${y}px)`;
         }
 
         btnNo.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita conflictos de clics
+            e.preventDefault(); // Evita zoom o scroll accidental
             
             if (noClickCount < phrases.length) {
                 btnNo.innerText = phrases[noClickCount];
             }
 
-            // El botón SI crece
+            // El botón SI crece un poco menos para no laguear
             let siSize = parseFloat(window.getComputedStyle(btnSi).fontSize);
-            btnSi.style.fontSize = (siSize + 10) + "px";
-            btnSi.style.padding = (siSize + 5) + "px " + (siSize * 1.5) + "px";
+            btnSi.style.fontSize = (siSize + 6) + "px";
+            btnSi.style.padding = (siSize / 2 + 5) + "px " + (siSize + 5) + "px";
 
-            // Escape suave a partir del clic 5
-            if (noClickCount >= 5) {
+            // El botón NO se achica
+            let noSize = parseFloat(window.getComputedStyle(btnNo).fontSize);
+            if (noSize > 8) {
+                btnNo.style.fontSize = (noSize - 1) + "px";
+                btnNo.style.padding = "8px 12px";
+            }
+
+            if (noClickCount >= 4) {
                 moverBoton();
             }
 
-            // FINAL DRAMÁTICO
+            // Final dramático
             if (noClickCount >= phrases.length - 1) {
                 btnNo.style.display = 'none';
                 btnSi.classList.add('pantalla-completa');
@@ -178,7 +183,7 @@
 
         btnSi.addEventListener('click', () => {
             quizSection.classList.add('hidden');
-            btnSi.classList.add('hidden'); // Ocultar si está en pantalla completa
+            btnSi.classList.add('hidden');
             celebration.classList.remove('hidden');
 
             if (noClickCount === 0) {
@@ -189,10 +194,11 @@
                 finalMessage.innerText = "¡Valió la pena la persecución! Te quiero mucho. ✨";
             }
 
+            // Confeti optimizado para móvil
             confetti({
-                particleCount: 200,
-                spread: 80,
-                origin: { y: 0.6 }
+                particleCount: 100,
+                spread: 60,
+                origin: { y: 0.7 }
             });
         });
     </script>
